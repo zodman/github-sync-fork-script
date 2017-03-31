@@ -25,11 +25,14 @@ if __name__ == '__main__':
         repo_url = check_output(CURRENT_REPO_CMD)
         print("Getting repo's url...")
         print("Syncing repo:", repo_url)
-
-        url_segments = repo_url.split("github.com/")
+        if 'git@github.com' in repo_url:
+            url_segments = repo_url.split("github.com:")
+        else:
+            url_segments = repo_url.split("github.com/")
         path = url_segments[1]
         user, repo = path.split("/")
-
+        if ".git" in repo:
+            repo = repo.replace(".git","")
         print("Checking the fork's parent url...", "\n")
         url = "https://api.github.com/repos/{}/{}".format(user, repo)
         req = urllib2.urlopen(url)
@@ -38,7 +41,7 @@ if __name__ == '__main__':
 
         print("Will add remote to parent repo:", parent_url, "\n")
         ADD_REMOTE_CMD.append(parent_url)
-        print(ADD_REMOTE_CMD)
+        print("exec"," ".join(ADD_REMOTE_CMD))
         call(ADD_REMOTE_CMD)
         print("")
 
